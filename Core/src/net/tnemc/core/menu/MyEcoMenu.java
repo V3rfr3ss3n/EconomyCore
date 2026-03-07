@@ -50,6 +50,7 @@ import net.tnemc.menu.core.icon.action.impl.ChatAction;
 import net.tnemc.menu.core.icon.action.impl.RunnableAction;
 import net.tnemc.menu.core.icon.action.impl.SwitchPageAction;
 import net.tnemc.menu.core.icon.impl.StateIcon;
+import net.tnemc.menu.core.manager.MenuManager;
 import net.tnemc.menu.core.viewer.MenuViewer;
 import net.tnemc.plugincore.PluginCore;
 import net.tnemc.plugincore.core.compatibility.PlayerProvider;
@@ -457,36 +458,62 @@ public class MyEcoMenu extends Menu {
     addPage(currencyNoteMaterialPage);
 
     final Page currencyNoteEnchantPage = new PageBuilder(CURRENCY_NOTE_ENCHANTS_PAGE).build();
-    currencyNoteEnchantPage.setOpen((open->new EnchantmentSelectionPage("CURRENCY_NOTE_ENCHANTS", this.name, this.name, CURRENCY_NOTE_ENCHANTS_PAGE, CURRENCY_NOTE_EDIT_PAGE, "CURRENCY_NOTE_ENCHANTS_PAGE", this.rows, (selection)->{
+    currencyNoteEnchantPage.setOpen((open->{
       if(open.getPlayer().viewer().isPresent()) {
-
-        final Optional<Object> currencyOpt = open.getPlayer().viewer().get().findData(ACTIVE_CURRENCY);
+        final MenuViewer viewer = open.getPlayer().viewer().get();
+        final Optional<Object> currencyOpt = viewer.findData(ACTIVE_CURRENCY);
         if(currencyOpt.isPresent()) {
-
           final Currency currencyObject = (Currency)currencyOpt.get();
-          if(currencyObject.getNote().isPresent()) {
-            currencyObject.getNote().get().setEnchantments(Arrays.asList(selection.getValue().split(",")));
-          }
+          currencyObject.getNote().ifPresent(note->{
+            for(final String enchantment : MenuManager.instance().getHelper().enchantments()) {
+              final boolean enabled = note.getEnchantments().contains(enchantment);
+              viewer.addData("CURRENCY_NOTE_ENCHANTS_" + enchantment, enabled ? "ENABLED" : "DISABLED");
+            }
+          });
         }
       }
-    }).handle(open)));
+      new EnchantmentSelectionPage("CURRENCY_NOTE_ENCHANTS", this.name, this.name, CURRENCY_NOTE_ENCHANTS_PAGE, CURRENCY_NOTE_EDIT_PAGE, "CURRENCY_NOTE_ENCHANTS_PAGE", this.rows, (selection)->{
+        if(open.getPlayer().viewer().isPresent()) {
+
+          final Optional<Object> currencyOpt = open.getPlayer().viewer().get().findData(ACTIVE_CURRENCY);
+          if(currencyOpt.isPresent()) {
+
+            final Currency currencyObject = (Currency)currencyOpt.get();
+            currencyObject.getNote().ifPresent(note->note.setEnchantments(Arrays.asList(selection.getValue().split(","))));
+          }
+        }
+      }).handle(open);
+    }));
     addPage(currencyNoteEnchantPage);
 
     final Page currencyNoteFlagPage = new PageBuilder(CURRENCY_NOTE_FLAGS_PAGE).build();
-    currencyNoteFlagPage.setOpen((open->new FlagSelectionPage("CURRENCY_NOTE_FLAGS", this.name, this.name, CURRENCY_NOTE_FLAGS_PAGE, CURRENCY_NOTE_EDIT_PAGE, "CURRENCY_NOTE_FLAGS_PAGE", this.rows, (selection)->{
-
+    currencyNoteFlagPage.setOpen((open->{
       if(open.getPlayer().viewer().isPresent()) {
-
-        final Optional<Object> currencyOpt = open.getPlayer().viewer().get().findData(ACTIVE_CURRENCY);
+        final MenuViewer viewer = open.getPlayer().viewer().get();
+        final Optional<Object> currencyOpt = viewer.findData(ACTIVE_CURRENCY);
         if(currencyOpt.isPresent()) {
-
           final Currency currencyObject = (Currency)currencyOpt.get();
-          if(currencyObject.getNote().isPresent()) {
-            currencyObject.getNote().get().setFlags(Arrays.asList(selection.getValue().split(",")));
-          }
+          currencyObject.getNote().ifPresent(note->{
+            for(final String flag : MenuManager.instance().getHelper().flags()) {
+              final boolean enabled = note.getFlags().contains(flag);
+              viewer.addData("CURRENCY_NOTE_FLAGS_" + flag, enabled ? "ENABLED" : "DISABLED");
+            }
+          });
         }
       }
-    }).handle(open)));
+      new FlagSelectionPage("CURRENCY_NOTE_FLAGS", this.name, this.name, CURRENCY_NOTE_FLAGS_PAGE, CURRENCY_NOTE_EDIT_PAGE, "CURRENCY_NOTE_FLAGS_PAGE", this.rows, (selection)->{
+
+        if(open.getPlayer().viewer().isPresent()) {
+
+          final Optional<Object> currencyOpt = open.getPlayer().viewer().get().findData(ACTIVE_CURRENCY);
+          if(currencyOpt.isPresent()) {
+
+            final Currency currencyObject = (Currency)currencyOpt.get();
+            currencyObject.getNote().ifPresent(note->note.setFlags(Arrays.asList(selection.getValue().split(","))));
+          }
+        }
+      }).handle(open);
+    }));
     addPage(currencyNoteFlagPage);
 
     final Page noteFeePage = new PageBuilder(CURRENCY_NOTE_FEE_SELECTION_PAGE).build();
@@ -557,37 +584,61 @@ public class MyEcoMenu extends Menu {
     addPage(denominationMaterialPage);
 
     final Page denominationEnchantPage = new PageBuilder(DENOMINATION_ENCHANTS_PAGE).build();
-    denominationEnchantPage.setOpen((open->new EnchantmentSelectionPage("DENOMINATION_ENCHANTS", this.name, this.name, DENOMINATION_ENCHANTS_PAGE, DENOMINATION_EDIT_PAGE, "DENOMINATION_ENCHANTS_PAGE", this.rows, (selection)->{
-
+    denominationEnchantPage.setOpen((open->{
       if(open.getPlayer().viewer().isPresent()) {
-
-        final Optional<Object> denomOpt = open.getPlayer().viewer().get().findData(ACTIVE_DENOMINATION);
-        if(denomOpt.isPresent()) {
-
-          final Denomination denomObj = (Denomination)denomOpt.get();
-          if(denomObj instanceof final ItemDenomination itemDenomination && !selection.getValue().isEmpty()) {
-            itemDenomination.enchantments(Arrays.asList(selection.getValue().split(",")));
+        final MenuViewer viewer = open.getPlayer().viewer().get();
+        final Optional<Object> denomOpt = viewer.findData(ACTIVE_DENOMINATION);
+        if(denomOpt.isPresent() && denomOpt.get() instanceof final ItemDenomination itemDenomination) {
+          for(final String enchantment : MenuManager.instance().getHelper().enchantments()) {
+            final boolean enabled = itemDenomination.enchantments().contains(enchantment);
+            viewer.addData("DENOMINATION_ENCHANTS_" + enchantment, enabled ? "ENABLED" : "DISABLED");
           }
         }
       }
-    }).handle(open)));
+      new EnchantmentSelectionPage("DENOMINATION_ENCHANTS", this.name, this.name, DENOMINATION_ENCHANTS_PAGE, DENOMINATION_EDIT_PAGE, "DENOMINATION_ENCHANTS_PAGE", this.rows, (selection)->{
+
+        if(open.getPlayer().viewer().isPresent()) {
+
+          final Optional<Object> denomOpt = open.getPlayer().viewer().get().findData(ACTIVE_DENOMINATION);
+          if(denomOpt.isPresent()) {
+
+            final Denomination denomObj = (Denomination)denomOpt.get();
+            if(denomObj instanceof final ItemDenomination itemDenomination && !selection.getValue().isEmpty()) {
+              itemDenomination.enchantments(Arrays.asList(selection.getValue().split(",")));
+            }
+          }
+        }
+      }).handle(open);
+    }));
     addPage(denominationEnchantPage);
 
     final Page denominationFlagPage = new PageBuilder(DENOMINATION_FLAGS_PAGE).build();
-    denominationFlagPage.setOpen((open->new FlagSelectionPage("DENOMINATION_FLAGS", this.name, this.name, DENOMINATION_FLAGS_PAGE, DENOMINATION_EDIT_PAGE, "DENOMINATION_FLAGS_PAGE", this.rows, (selection)->{
-
+    denominationFlagPage.setOpen((open->{
       if(open.getPlayer().viewer().isPresent()) {
-
-        final Optional<Object> denomOpt = open.getPlayer().viewer().get().findData(ACTIVE_DENOMINATION);
-        if(denomOpt.isPresent()) {
-
-          final Denomination denomObj = (Denomination)denomOpt.get();
-          if(denomObj instanceof final ItemDenomination itemDenomination && !selection.getValue().isEmpty()) {
-            itemDenomination.flags(Arrays.asList(selection.getValue().split(",")));
+        final MenuViewer viewer = open.getPlayer().viewer().get();
+        final Optional<Object> denomOpt = viewer.findData(ACTIVE_DENOMINATION);
+        if(denomOpt.isPresent() && denomOpt.get() instanceof final ItemDenomination itemDenomination) {
+          for(final String flag : MenuManager.instance().getHelper().flags()) {
+            final boolean enabled = itemDenomination.flags().contains(flag);
+            viewer.addData("DENOMINATION_FLAGS_" + flag, enabled ? "ENABLED" : "DISABLED");
           }
         }
       }
-    }).handle(open)));
+      new FlagSelectionPage("DENOMINATION_FLAGS", this.name, this.name, DENOMINATION_FLAGS_PAGE, DENOMINATION_EDIT_PAGE, "DENOMINATION_FLAGS_PAGE", this.rows, (selection)->{
+
+        if(open.getPlayer().viewer().isPresent()) {
+
+          final Optional<Object> denomOpt = open.getPlayer().viewer().get().findData(ACTIVE_DENOMINATION);
+          if(denomOpt.isPresent()) {
+
+            final Denomination denomObj = (Denomination)denomOpt.get();
+            if(denomObj instanceof final ItemDenomination itemDenomination && !selection.getValue().isEmpty()) {
+              itemDenomination.flags(Arrays.asList(selection.getValue().split(",")));
+            }
+          }
+        }
+      }).handle(open);
+    }));
     addPage(denominationFlagPage);
 
     final Page denominationWeightPage = new PageBuilder(DENOMINATION_WEIGHT_SELECTION_PAGE).build();
@@ -1036,8 +1087,8 @@ public class MyEcoMenu extends Menu {
         callback.getPage().addIcon(notableIcon);
 
         if(currency.getNote().isPresent()) {
-
-          final String material = (currency.getNote().isPresent())? currency.getNote().get().getMaterial() : "PAPER";
+          final Note note = currency.getNote().get();
+          final String material = note.getMaterial();
           callback.getPage().addIcon(new IconBuilder(PluginCore.server().stackBuilder().of(material, 1)
                                                              .customName(MessageHandler.grab(new MessageData("Messages.Menu.MyEco.EditNote.NoteMaterialDisplay"), id))
                                                              .lore(Collections.singletonList(MessageHandler.grab(new MessageData("Messages.Menu.MyEco.EditNote.NoteMaterialLore"), id))))
@@ -1075,7 +1126,7 @@ public class MyEcoMenu extends Menu {
 
                                                  try {
 
-                                                   currency.getNote().get().setCustomModelData(Integer.parseInt(message.getMessage()));
+                                                   currency.getNote().ifPresent(n->n.setCustomModelData(Integer.parseInt(message.getMessage())));
 
                                                    return true;
                                                  } catch(final NumberFormatException ignore) { }
@@ -1083,9 +1134,12 @@ public class MyEcoMenu extends Menu {
                                                message.getPlayer().message("Enter custom model of the note item:");
                                                return false;
                                              }), new RunnableAction((run)->run.player().message("Enter custom model of the note item:")))
-                                             .withItemProvider((provider)->PluginCore.server().stackBuilder().of("PAPER", 1)
-                                                     .lore(Collections.singletonList(MessageHandler.grab(new MessageData("Messages.Menu.MyEco.EditNote.CustomModelLore"), id)))
-                                                     .customName(Component.text(String.valueOf(currency.getNote().get().getCustomModelData()))))
+                                             .withItemProvider((provider)->{
+                                               final int modelData = currency.getNote().map(Note::getCustomModelData).orElse(0);
+                                               return PluginCore.server().stackBuilder().of("PAPER", 1)
+                                                       .lore(Collections.singletonList(MessageHandler.grab(new MessageData("Messages.Menu.MyEco.EditNote.CustomModelLore"), id)))
+                                                       .customName(Component.text(String.valueOf(modelData)));
+                                             })
                                              .build());
 
           callback.getPage().addIcon(new IconBuilder(PluginCore.server().stackBuilder().of("PAPER", 1)

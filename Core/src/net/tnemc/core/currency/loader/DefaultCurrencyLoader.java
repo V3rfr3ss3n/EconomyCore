@@ -278,10 +278,16 @@ public class DefaultCurrencyLoader implements CurrencyLoader {
 
       if(cur.contains("Note.Item.Enchantments")) {
         note.setEnchantments(cur.getStringList("Note.Item.Enchantments"));
+      } else if(cur.contains("Note.Item.Item.Enchantments")) {
+        // Legacy path written by older saver versions.
+        note.setEnchantments(cur.getStringList("Note.Item.Item.Enchantments"));
       }
 
       if(cur.contains("Note.Item.Flags")) {
         note.setFlags(cur.getStringList("Note.Item.Flags"));
+      } else if(cur.contains("Note.Item.Item.Flags")) {
+        // Legacy path written by older saver versions.
+        note.setFlags(cur.getStringList("Note.Item.Item.Flags"));
       }
       currency.setNote(note);
     }

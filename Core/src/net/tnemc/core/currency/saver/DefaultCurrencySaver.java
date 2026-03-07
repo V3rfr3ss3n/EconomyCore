@@ -239,11 +239,11 @@ public class DefaultCurrencySaver implements CurrencySaver {
       MISCUtils.setComment(cur, "Note.Item.Texture", "The base64 texture to use if the material is PLAYER_HEAD");
       cur.set("Note.Item.Texture", note.get().getTexture());
 
-      MISCUtils.setComment(cur, "Note.Item.Item.Enchantments", "All configurations relating to enchantment identification for the note item");
-      cur.set("Note.Item.Item.Enchantments", note.get().getEnchantments());
+      MISCUtils.setComment(cur, "Note.Item.Enchantments", "All configurations relating to enchantment identification for the note item");
+      cur.set("Note.Item.Enchantments", note.get().getEnchantments());
 
-      MISCUtils.setComment(cur, "Note.Item.Item.Flags", "All configurations relating to item flags identification for the note item");
-      cur.set("Note.Item.Item.Flags", note.get().getFlags());
+      MISCUtils.setComment(cur, "Note.Item.Flags", "All configurations relating to item flags identification for the note item");
+      cur.set("Note.Item.Flags", note.get().getFlags());
     }
 
     //Conversion

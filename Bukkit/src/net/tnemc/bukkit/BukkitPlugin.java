@@ -23,6 +23,7 @@ import net.tnemc.bukkit.hook.economy.VaultUnlockedHook;
 import net.tnemc.bukkit.hook.misc.PAPIHook;
 import net.tnemc.bukkit.hook.misc.PlaceHolderRule;
 import net.tnemc.bukkit.listeners.entity.EntityKilledListener;
+import net.tnemc.bukkit.compat.BukkitItemPlatformCompatibility;
 import net.tnemc.bukkit.listeners.inventory.ItemCraftListener;
 import net.tnemc.bukkit.listeners.player.PlayerCloseInventoryListener;
 import net.tnemc.bukkit.listeners.player.PlayerExperienceGainListener;
@@ -67,6 +68,7 @@ public class BukkitPlugin {
     this.pluginCore = new ModifiedBukkitPluginCore(plugin, core, server, new BaseTranslationProvider(), new TNECallbackProvider());
 
     this.pluginCore.load();
+    BukkitItemPlatformCompatibility.apply();
 
     //Vault
     PluginCore.log().inform("Checking for VaultUnlocked");

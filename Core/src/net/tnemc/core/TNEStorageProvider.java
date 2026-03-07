@@ -36,6 +36,7 @@ import net.tnemc.core.io.storage.dialect.impl.MariaDialect;
 import net.tnemc.core.io.storage.dialect.impl.MariaOutdatedDialect;
 import net.tnemc.core.io.storage.dialect.impl.MySQLDialect;
 import net.tnemc.core.io.storage.dialect.impl.MySQLRevampDialect;
+import net.tnemc.core.io.storage.connect.UUIDSafeSQLConnector;
 import net.tnemc.core.transaction.Receipt;
 import net.tnemc.plugincore.PluginCore;
 import net.tnemc.plugincore.core.compatibility.log.DebugLevel;
@@ -89,48 +90,48 @@ public class TNEStorageProvider implements StorageProvider {
 
         if(maria) {
           this.engine = new MariaDB(prefix, new MariaDialect(prefix));
-          this.connector = new SQLConnector();
+          this.connector = new UUIDSafeSQLConnector();
           break;
         }
         this.engine = new MySQL(prefix, new MySQLDialect(prefix));
-        this.connector = new SQLConnector();
+        this.connector = new UUIDSafeSQLConnector();
       }
       case "maria", "mariadb" -> {
 
         if(maria) {
           this.engine = new MariaDB(prefix, new MariaDialect(prefix));
-          this.connector = new SQLConnector();
+          this.connector = new UUIDSafeSQLConnector();
           break;
         }
 
         this.engine = new MySQL(prefix, new MariaDialect(prefix));
-        this.connector = new SQLConnector();
+        this.connector = new UUIDSafeSQLConnector();
       }
       case "maria-outdated" -> {
         PluginCore.log().warning("Using outdated database! Please note: Official Support for this version of TNE is limited.", DebugLevel.OFF);
 
         if(maria) {
           this.engine = new MariaDB(prefix, new MariaOutdatedDialect(prefix));
-          this.connector = new SQLConnector();
+          this.connector = new UUIDSafeSQLConnector();
           break;
         }
 
         this.engine = new MySQL(prefix, new MariaOutdatedDialect(prefix));
-        this.connector = new SQLConnector();
+        this.connector = new UUIDSafeSQLConnector();
       }
       case "postgre" -> {
         this.engine = new PostgreSQL(new MySQLDialect(prefix));
-        this.connector = new SQLConnector();
+        this.connector = new UUIDSafeSQLConnector();
       }
       case "mysql-revamp" -> {
         if(maria) {
           this.engine = new MariaDB(prefix, new MySQLRevampDialect(prefix));
-          this.connector = new SQLConnector();
+          this.connector = new UUIDSafeSQLConnector();
           break;
         }
 
         this.engine = new MySQL(prefix, new MySQLRevampDialect(prefix));
-        this.connector = new SQLConnector();
+        this.connector = new UUIDSafeSQLConnector();
       }
       default -> {
         this.engine = new YAML();

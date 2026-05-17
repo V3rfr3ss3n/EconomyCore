@@ -165,8 +165,6 @@ public class SQLAccount implements Datable<Account> {
 
       final AccountSaveCallback callback = new AccountSaveCallback(account);
       PluginCore.callbacks().call(callback);
-
-      TNECore.instance().storage().storeAll(account.getIdentifier().toString());
     }
   }
 

@@ -176,19 +176,10 @@ public class DefaultCurrencyLoader implements CurrencyLoader {
 
 
     final UUID check = UUID.nameUUIDFromBytes(identifier.getBytes(StandardCharsets.UTF_8));
-    if(cur.contains("Info.UUID")) {
-
-      final UUID id = (uuidAsId && !cur.getString("Info.UUID").equalsIgnoreCase(check.toString()))? check : UUID.fromString(cur.getString("Info.UUID"));
-
-
-      final Optional<Currency> curOption = TNECore.eco().currency().find(id);
-      if(curOption.isEmpty()) {
-        currency.setUid(UUID.fromString(cur.getString("Info.UUID")));
-      }
-    } else {
-      if(uuidAsId) {
-        currency.setUid(check);
-      }
+    final UUID resolvedCurrencyId = resolveCurrencyUUID(cur.getString("Info.UUID"), check, uuidAsId);
+    final Optional<Currency> curOption = TNECore.eco().currency().find(resolvedCurrencyId);
+    if(curOption.isEmpty()) {
+      currency.setUid(resolvedCurrencyId);
     }
 
     currency.setIdentifier(identifier);
@@ -311,6 +302,26 @@ public class DefaultCurrencyLoader implements CurrencyLoader {
       PluginCore.log().error("Failed to save currency YAML!", e, DebugLevel.OFF);
     }
     return true;
+  }
+
+  private UUID resolveCurrencyUUID(final String configured,
+                                   final UUID identifierUUID,
+                                   final boolean uuidAsId) {
+
+    if(uuidAsId) {
+      return identifierUUID;
+    }
+
+    if(configured == null || configured.isBlank()) {
+      return identifierUUID;
+    }
+
+    try {
+      return UUID.fromString(configured);
+    } catch(final IllegalArgumentException ignore) {
+      PluginCore.log().warning("Invalid currency UUID '" + configured + "'. Falling back to deterministic identifier UUID: " + identifierUUID);
+      return identifierUUID;
+    }
   }
 
   /**

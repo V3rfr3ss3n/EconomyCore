@@ -332,6 +332,14 @@ public abstract class TNECore extends PluginEngine {
   public void registerUpdateChecker() {
 
     if(MainConfig.yaml().getBoolean("Core.Update.Check")) {
+      // The update endpoint is external and can be unavailable or slow. Never let
+      // that network request hold up the server's enable sequence.
+      PluginCore.server().scheduler().createDelayedTask(this::checkForUpdates, new ChoreTime(0), ChoreExecution.SECONDARY);
+    }
+  }
+
+  private void checkForUpdates() {
+
       this.updateChecker = new Updater();
 
       PluginCore.log().inform("Running version: " + version() + " Build: " + build());
@@ -345,7 +353,6 @@ public abstract class TNECore extends PluginEngine {
       if(this.updateChecker.isEarlyBuild()) {
         PluginCore.log().inform("Running pre-release version! Thanks for being a tester!");
       }
-    }
   }
 
   @Override

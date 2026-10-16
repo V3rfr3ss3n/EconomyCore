@@ -228,15 +228,27 @@ public class DefaultCurrencyLoader implements CurrencyLoader {
       uuidAsId = cur.getBoolean("Info.UUIDAsId");
     }
 
-    final UUID check = UUID.nameUUIDFromBytes(identifier.getBytes(StandardCharsets.UTF_8));
-    if(cur.contains("Info.UUID")) {
-      final UUID id = uuidAsId && !cur.getString("Info.UUID").equalsIgnoreCase(check.toString())
-                      ? check : UUID.fromString(cur.getString("Info.UUID"));
-      if(TNECore.eco().currency().find(id).isEmpty()) {
-        currency.setUid(UUID.fromString(cur.getString("Info.UUID")));
-      }
-    } else if(uuidAsId) {
-      currency.setUid(check);
+    final UUID identifierUUID = UUID.nameUUIDFromBytes(identifier.getBytes(StandardCharsets.UTF_8));
+    final UUID resolvedUUID = resolveCurrencyUUID(cur.getString("Info.UUID"), identifierUUID, uuidAsId);
+    if(TNECore.eco().currency().find(resolvedUUID).isEmpty()) {
+      currency.setUid(resolvedUUID);
+    }
+  }
+
+  private UUID resolveCurrencyUUID(final String configured,
+                                   final UUID identifierUUID,
+                                   final boolean uuidAsId) {
+
+    if(uuidAsId || configured == null || configured.isBlank()) {
+      return identifierUUID;
+    }
+
+    try {
+      return UUID.fromString(configured);
+    } catch(final IllegalArgumentException exception) {
+      PluginCore.log().warning("Invalid currency UUID '" + configured
+                               + "'. Falling back to deterministic identifier UUID: " + identifierUUID);
+      return identifierUUID;
     }
   }
 

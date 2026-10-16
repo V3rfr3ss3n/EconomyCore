@@ -5,6 +5,7 @@ import net.tnemc.item.paper.PaperItemStack;
 import net.tnemc.item.paper.platform.PaperItemPlatform;
 import net.tnemc.item.paper.platform.impl.modern.PaperAttackRangeComponent;
 import net.tnemc.item.paper.platform.impl.modern.PaperMinimumAttackChargeComponent;
+import net.tnemc.item.paper.platform.impl.modern.PaperMapColorComponent;
 import net.tnemc.item.paper.platform.impl.modern.PaperBreakSoundComponent;
 import net.tnemc.item.paper.platform.impl.modern.PaperPotionDurationScaleComponent;
 import net.tnemc.item.paper.platform.impl.old.PaperOldUnbreakableComponent;
@@ -51,6 +52,14 @@ final class PaperComponentCompatibility {
       public boolean enabled(final String version) {
 
         return potionDurationScale && super.enabled(version);
+      }
+    });
+    final boolean mapColorAvailable = available("MAP_COLOR");
+    register(new PaperMapColorComponent() {
+      @Override
+      public boolean enabled(final String version) {
+
+        return mapColorAvailable && super.enabled(version);
       }
     });
   }

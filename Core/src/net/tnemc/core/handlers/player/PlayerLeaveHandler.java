@@ -61,6 +61,7 @@ public class PlayerLeaveHandler {
 
             //account.get().setHoldings(entry, entry.getHandler());
             account.get().getWallet().setHoldings(entry);
+            StorageManager.instance().store(entry, account.get().getIdentifier().toString());
           }
         }
       }

@@ -19,6 +19,7 @@ package net.tnemc.core.currency;
  */
 
 import net.tnemc.core.EconomyManager;
+import net.tnemc.core.TNECore;
 import net.tnemc.core.account.Account;
 import net.tnemc.core.account.holdings.HoldingsEntry;
 import net.tnemc.core.account.holdings.HoldingsHandler;
@@ -185,6 +186,6 @@ public interface CurrencyType {
     final HoldingsEntry entry = new HoldingsEntry(region, currency.getUid(), amount, type);
     account.getWallet().setHoldings(entry);
 
-    //TNECore.instance().storage().store(entry, account.getIdentifier());
+    TNECore.instance().storage().store(entry, account.getIdentifier().toString());
   }
 }

@@ -304,7 +304,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.8-R0.1-SNAPSHOT</version>
+            <version>26.3.build.178-stable</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -334,7 +334,7 @@
         <dependency>
             <groupId>net.kyori</groupId>
             <artifactId>adventure-text-serializer-plain</artifactId>
-            <version>4.25.0</version>
+            <version>${depend.adventure}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
